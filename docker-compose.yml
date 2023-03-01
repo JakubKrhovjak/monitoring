@@ -18,7 +18,6 @@ services:
     container_name: grafana
     restart: unless-stopped
     volumes:
-      - ./docker/grafana/plugins:/var/lib/grafana/plugins
       - ./docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./docker/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
     environment:
