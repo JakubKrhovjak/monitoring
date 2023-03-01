@@ -1,5 +1,15 @@
 version: '3'
 services:
+  postgresql:
+    container_name: postgresql
+    image: bitnami/postgresql:latest
+    environment:
+      - POSTGRESQL_USERNAME=jakub
+      - POSTGRESQL_DATABASE=data_db
+      - POSTGRESQL_PASSWORD=pass
+    ports:
+      - 5432:5432
+
   prometheus:
     container_name: prometheus
     image: prom/prometheus

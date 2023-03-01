@@ -30,7 +30,7 @@ public class CustomerServiceApplication {
 
     @Bean
     MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
-        return registry -> registry.config().commonTags("application", "MYAPPNAME");
+        return registry -> registry.config().commonTags("application", "customer-service", "instance", "test-instance");
     }
 
 }

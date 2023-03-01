@@ -1,7 +1,27 @@
-
 management:
   endpoints:
     web:
       exposure:
         include:
           - prometheus
+
+spring:
+  application:
+    name: customer-service
+  profiles:
+    default: local
+  lifecycle:
+    timeout-per-shutdown-phase: 1m
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/data_db?user=jakub&password=pass
+#    username: user
+#    password: pass
+
+  flyway:
+    url: ${spring.datasource.url}
