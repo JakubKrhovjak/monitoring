@@ -25,3 +25,4 @@ spring:
 
   flyway:
     url: ${spring.datasource.url}
+    enabled: false
