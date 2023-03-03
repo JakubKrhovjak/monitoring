@@ -36,4 +36,21 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - 3000:3000
-#    user: "472"
+  tempo:
+    container_name: tempo
+    image: grafana/tempo
+#    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    command: [ '-config.file=/etc/tempo.yml' ]
+    volumes:
+      - ./docker/grafana/tempo.yml:/etc/tempo.yml:ro
+      - ./docker/tempo-data/:/tmp/tempo
+    ports:
+      - 3200:3200    # tempo
+  loki:
+    container_name: loki
+    image: grafana/loki
+#    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    command: [ '-config.file=/etc/loki/local-config.yaml' ]
+    ports:
+      - 3100:3100
+
