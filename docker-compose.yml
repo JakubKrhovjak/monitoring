@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   postgresql:
     container_name: postgresql
@@ -39,14 +39,17 @@ services:
   tempo:
     network_mode: host
     container_name: tempo
-    image: grafana/tempo
+    image: grafana/tempo:1.5.0
 #    extra_hosts: [ 'host.docker.internal:host-gateway' ]
-    command: [ '-config.file=/etc/tempo.yml' ]
-    volumes:
-      - ./docker/grafana/tempo.yml:/etc/tempo.yml:ro
-      - ./docker/tempo-data/:/tmp/tempo
+#    command: [ '-config.file=/etc/tempo.yml' ]
+    command: [ "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false", "--search.enabled=true" ]
+#    volumes:
+#      - ./docker/grafana/tempo.yml:/etc/tempo.yml:ro
+#      - ./docker/tempo-data/:/tmp/tempo
     ports:
       - 3200:3200    # tempo
+      - 4317:4317
+#    logging: *default-logging
   loki:
     network_mode: host
     container_name: loki
