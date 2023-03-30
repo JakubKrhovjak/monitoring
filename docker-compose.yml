@@ -1,14 +1,18 @@
 version: '3.4'
 services:
-  postgresql:
-    container_name: postgresql
-    image: bitnami/postgresql:latest
-    environment:
-      - POSTGRESQL_USERNAME=jakub
-      - POSTGRESQL_DATABASE=data_db
-      - POSTGRESQL_PASSWORD=pass
+  otel-collector:
+    image: otel/opentelemetry-collector
+    command: [ --config=/etc/otel-collector-config.yaml ]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
-      - 5432:5432
+      - 1888:1888 # pprof extension
+      - 8888:8888 # Prometheus metrics exposed by the collector
+      - 8889:8889 # Prometheus exporter metrics
+      - 13133:13133 # health_check extension
+#      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP http receiver
+      - 55679:55679 # zpages extension
 
   prometheus:
     container_name: prometheus
@@ -21,10 +25,31 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
       - 9090:9090
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test: wget --no-verbose --tries=1 --spider http://localhost:9090/status || exit 1
 
+  tempo:
+    image: grafana/tempo:1.5.0
+    command: [ "-search.enabled=true", "-config.file=/etc/tempo.yaml" ]
+    container_name: tempo
+    hostname: tempo
+    volumes:
+      - ./docker/tempo/tempo-config.yaml/:/etc/tempo.yaml
+      - ./docker/tempo/tempo-overrides.yaml:/etc/overrides.yaml
+      - ./docker/tempo-data:/tmp/tempo
+    ports:
+      - "3200:3200"
+      - "4317:4317"
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test: wget --no-verbose --tries=1 --spider http://localhost:3200/status || exit 1
+
+#   -------- UI -----------------
   grafana:
     image: grafana/grafana
-    network_mode: host
     container_name: grafana
     restart: unless-stopped
     volumes:
@@ -36,26 +61,29 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - 3000:3000
-  tempo:
-    network_mode: host
-    container_name: tempo
-    image: grafana/tempo:1.5.0
-#    extra_hosts: [ 'host.docker.internal:host-gateway' ]
-#    command: [ '-config.file=/etc/tempo.yml' ]
-    command: [ "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false", "--search.enabled=true" ]
-#    volumes:
-#      - ./docker/grafana/tempo.yml:/etc/tempo.yml:ro
-#      - ./docker/tempo-data/:/tmp/tempo
-    ports:
-      - 3200:3200    # tempo
-      - 4317:4317
-#    logging: *default-logging
-  loki:
-    network_mode: host
-    container_name: loki
-    image: grafana/loki
-#    extra_hosts: [ 'host.docker.internal:host-gateway' ]
-    command: [ '-config.file=/etc/loki/local-config.yaml' ]
-    ports:
-      - 3100:3100
+    depends_on:
+      tempo:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
 
+  postgresql:
+    container_name: postgresql
+    image: bitnami/postgresql:latest
+    environment:
+      - POSTGRESQL_USERNAME=jakub
+      - POSTGRESQL_DATABASE=data_db
+      - POSTGRESQL_PASSWORD=pass
+    ports:
+      - 5432:5432
+
+##    logging: *default-logging
+#  loki:
+#    network_mode: host
+#    container_name: loki
+#    image: grafana/loki
+##    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+#    command: [ '-config.file=/etc/loki/local-config.yaml' ]
+#    ports:
+#      - 3100:3100
+#
