@@ -6,29 +6,31 @@ services:
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
-      - 1888:1888 # pprof extension
-      - 8888:8888 # Prometheus metrics exposed by the collector
-      - 8889:8889 # Prometheus exporter metrics
-      - 13133:13133 # health_check extension
+      - "5555:5555"
+      - "6666:6666"
+#      - 1888:1888 # pprof extension
+#      - 8888:8888 # Prometheus metrics exposed by the collector
+#      - 8889:8889 # Prometheus exporter metrics
+#      - 13133:13133 # health_check extension
 #      - 4317:4317 # OTLP gRPC receiver
-      - 4318:4318 # OTLP http receiver
-      - 55679:55679 # zpages extension
+#      - 4318:4318 # OTLP http receiver
+#      - 55679:55679 # zpages extension
 
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus
-    network_mode: host
-    restart: unless-stopped
-    volumes:
-      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    ports:
-      - 9090:9090
-    healthcheck:
-      interval: 5s
-      retries: 10
-      test: wget --no-verbose --tries=1 --spider http://localhost:9090/status || exit 1
+#  prometheus:
+#    container_name: prometheus
+#    image: prom/prometheus
+#    network_mode: host
+#    restart: unless-stopped
+#    volumes:
+#      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#    ports:
+#      - "9090:9090"
+#    healthcheck:
+#      interval: 5s
+#      retries: 10
+#      test: wget --no-verbose --tries=1 --spider http://localhost:9090/status || exit 1
 
   tempo:
     image: grafana/tempo:1.5.0
@@ -46,6 +48,9 @@ services:
       interval: 5s
       retries: 10
       test: wget --no-verbose --tries=1 --spider http://localhost:3200/status || exit 1
+    depends_on:
+      otel-collector:
+        condition: service_started
 
 #   -------- UI -----------------
   grafana:
@@ -60,12 +65,12 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
-      - 3000:3000
+      - "3000:3000"
     depends_on:
       tempo:
         condition: service_healthy
-      prometheus:
-        condition: service_healthy
+#      prometheus:
+#        condition: service_healthy
 
   postgresql:
     container_name: postgresql
@@ -75,7 +80,12 @@ services:
       - POSTGRESQL_DATABASE=data_db
       - POSTGRESQL_PASSWORD=pass
     ports:
-      - 5432:5432
+      - "5432:5432"
+    depends_on:
+      grafana:
+        condition: service_started
+
+
 
 ##    logging: *default-logging
 #  loki:

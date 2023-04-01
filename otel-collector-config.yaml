@@ -1,8 +1,8 @@
 receivers:
   otlp:
     protocols:
-      http:
-        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:5555
 
 
 exporters:
@@ -12,8 +12,9 @@ exporters:
     endpoint: tempo:4317
     tls:
       insecure: true
-  prometheus:
-    endpoint: prometheus:9090
+#  prometheus:
+#    endpoint: collector:6666
+#    namespace: default
 
 
 service:
@@ -27,10 +28,13 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [logging]
+#    logs:
+#      receivers: [otlp]
+#      processors: [batch]
+#      exporters: [logging]
+  telemetry:
     logs:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [logging]
+      level: debug
 
 extensions:
   health_check:
@@ -39,3 +43,5 @@ extensions:
 
 processors:
   batch:
+    timeout: 1s
+    send_batch_size: 1024
