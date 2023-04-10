@@ -7,10 +7,12 @@ global:
     monitor: 'test-monitor'
 
 scrape_configs:
-  - job_name: 'customer-service'
-    metrics_path: /actuator/prometheus
-    scrape_interval: 2s
+  - job_name: "prometheus"
     static_configs:
-      - targets: ['localhost:8080']
-        labels:
-          application: "Customer Service"
+      - targets: [ "host.docker.internal:9090" ]
+
+  - job_name: 'customerService'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:8080' ]
+

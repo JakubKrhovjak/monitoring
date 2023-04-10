@@ -12,9 +12,10 @@ exporters:
     endpoint: tempo:4317
     tls:
       insecure: true
-#  prometheus:
-#    endpoint: collector:6666
-#    namespace: default
+  prometheus:
+    endpoint: collector:6666
+    namespace: default
+
 
 
 service:
@@ -27,7 +28,7 @@ service:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [logging, prometheus]
 #    logs:
 #      receivers: [otlp]
 #      processors: [batch]

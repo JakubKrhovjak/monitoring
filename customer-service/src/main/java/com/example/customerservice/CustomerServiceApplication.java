@@ -2,14 +2,11 @@ package com.example.customerservice;
 
 import com.example.customerservice.entity.User;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +14,9 @@ import java.util.List;
 import java.util.Random;
 
 import io.micrometer.core.instrument.MeterRegistry;
+//import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -32,10 +31,19 @@ public class CustomerServiceApplication {
         SpringApplication.run(CustomerServiceApplication.class, args);
     }
 
-    @GetMapping("/something")
+    @GetMapping("/test")
     public ResponseEntity<String> createLogs() {
         log.warn("Just checking");
-        return ResponseEntity.ok().body("All Ok");
+        return ResponseEntity.ok(methodWithSleep());
+    }
+
+    @SneakyThrows
+//    @WithSpan
+    public String methodWithSleep() {
+        Thread.sleep(1000);
+        var afterSleep = "After sleep";
+        log.info(afterSleep);
+        return afterSleep;
     }
 
     @Bean
