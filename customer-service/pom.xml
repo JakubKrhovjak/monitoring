@@ -12,16 +12,26 @@
     <artifactId>customer-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>customer-service</name>
-    <description>customer-service</description>
+
     <properties>
         <java.version>17</java.version>
+        <otel.version>1.24.0</otel.version>
+<!--        <micrometer.version>1.0.3</micrometer.version>-->
     </properties>
-    <dependencies>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+<!--    <dependencyManagement>-->
+<!--        <dependencies>-->
+<!--            <dependency>-->
+<!--                <groupId>io.micrometer</groupId>-->
+<!--                <artifactId>micrometer-tracing-bom</artifactId>-->
+<!--&lt;!&ndash;                <version>${micrometer-tracing.version}</version>&ndash;&gt;-->
+<!--                <type>pom</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
+<!--        </dependencies>-->
+<!--    </dependencyManagement>-->
+
+    <dependencies>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -31,9 +41,13 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -41,16 +55,26 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
+        </dependency>
 
-        <!--        <dependency>-->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-zipkin</artifactId>
+        </dependency>
+
+<!--        <dependency>-->
 <!--            <groupId>io.opentelemetry</groupId>-->
 <!--            <artifactId>opentelemetry-api</artifactId>-->
-<!--            <version>1.20.1</version>-->
+<!--            <version>${otel.version}</version>-->
 <!--        </dependency>-->
+
 <!--        <dependency>-->
 <!--            <groupId>io.opentelemetry.instrumentation</groupId>-->
 <!--            <artifactId>opentelemetry-instrumentation-annotations</artifactId>-->
-<!--            <version>1.20.1</version>-->
+<!--            <version>${otel.version}</version>-->
 <!--        </dependency>-->
 
         <!--        <dependency>-->
@@ -59,17 +83,7 @@
         <!--            <version>1.0.1</version>-->
         <!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>io.micrometer</groupId>-->
-<!--            <artifactId>micrometer-tracing-bridge-brave</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>io.opentelemetry</groupId>-->
-<!--            <artifactId>opentelemetry-exporter-zipkin</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
+    <!--        <dependency>-->
 <!--            <groupId>io.micrometer</groupId>-->
 <!--            <artifactId>micrometer-registry-prometheus</artifactId>-->
 <!--            <scope>runtime</scope>-->

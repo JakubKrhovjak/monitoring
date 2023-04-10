@@ -38,7 +38,7 @@ public class CustomerServiceApplication {
     }
 
     @SneakyThrows
-//    @WithSpan
+
     public String methodWithSleep() {
         Thread.sleep(1000);
         var afterSleep = "After sleep";

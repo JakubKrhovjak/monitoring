@@ -1,24 +1,5 @@
 version: '3.4'
 services:
-#  otel-collector:
-#    image: otel/opentelemetry-collector
-#    command: [ --config=/etc/otel-collector-config.yaml ]
-#    volumes:
-#      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
-#    ports:
-#      - "5555:5555"
-#      - "6666:6666"
-##      - 1888:1888 # pprof extension
-##      - 8888:8888 # Prometheus metrics exposed by the collector
-##      - 8889:8889 # Prometheus exporter metrics
-##      - 13133:13133 # health_check extension
-##      - 4317:4317 # OTLP gRPC receiver
-##      - 4318:4318 # OTLP http receiver
-##      - 55679:55679 # zpages extension
-
-
-
-
   prometheus:
     container_name: prometheus
     image: prom/prometheus:v2.39.2
@@ -48,34 +29,27 @@ services:
       interval: 5s
       retries: 10
       test: wget --no-verbose --tries=1 --spider http://localhost:3100/status || exit 1
-#  promtail:
-#    image: grafana/promtail:2.8.0
-#    volumes:
-#      - ./docker/promtail-logs/log:/var/log
-#    command: -config.file=/etc/promtail/config.yml
 
-#  tempo:
-#    image: grafana/tempo:1.5.0
-#    command: [ "-search.enabled=true", "-config.file=/etc/tempo.yaml" ]
-#    container_name: tempo
-#    hostname: tempo
-#    volumes:
-#      - ./docker/tempo/tempo-config.yaml/:/etc/tempo.yaml
-#      - ./docker/tempo/tempo-overrides.yaml:/etc/overrides.yaml
-#      - ./docker/tempo-data:/tmp/tempo
-#    ports:
-#      - "3200:3200"
-#      - "4317:4317"
-#    healthcheck:
-#      interval: 5s
-#      retries: 10
-#      test: wget --no-verbose --tries=1 --spider http://localhost:3200/status || exit 1
-
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:1.5.0
+    command: [ "-search.enabled=true", "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./docker/tempo/tempo-config.yaml/:/etc/tempo.yaml
+      - ./docker/tempo/tempo-overrides.yaml:/etc/overrides.yaml
+      - ./docker/tempo-data:/tmp/tempo
+    ports:
+      - "3200:3200"
+      - "9411:9411" #zipkin
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test: wget --no-verbose --tries=1 --spider http://localhost:3200/status || exit 1
 
 #   -------- UI -----------------
   grafana:
-    image: grafana/grafana
     container_name: grafana
+    image: grafana/grafana
     restart: unless-stopped
     volumes:
       - ./docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
@@ -86,11 +60,13 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - "3000:3000"
-#    depends_on:
-#      tempo:
-#        condition: service_healthy
-#      prometheus:
-#        condition: service_healthy
+    depends_on:
+      tempo:
+        condition: service_healthy
+      loki:
+        condition: service_started
+      prometheus:
+        condition: service_healthy
 
   postgres:
     container_name: postgres
