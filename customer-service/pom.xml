@@ -55,16 +55,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-otel</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-exporter-zipkin</artifactId>
-        </dependency>
-
 <!--        <dependency>-->
 <!--            <groupId>io.opentelemetry</groupId>-->
 <!--            <artifactId>opentelemetry-api</artifactId>-->
@@ -77,17 +67,33 @@
 <!--            <version>${otel.version}</version>-->
 <!--        </dependency>-->
 
-        <!--        <dependency>-->
-        <!--            <groupId>net.ttddyy.observation</groupId>-->
-        <!--            <artifactId>datasource-micrometer-spring-boot</artifactId>-->
-        <!--            <version>1.0.1</version>-->
-        <!--        </dependency>-->
 
-    <!--        <dependency>-->
+
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+
+<!--        <dependency>-->
 <!--            <groupId>io.micrometer</groupId>-->
-<!--            <artifactId>micrometer-registry-prometheus</artifactId>-->
-<!--            <scope>runtime</scope>-->
+<!--            <artifactId>micrometer-tracing-bridge-otel</artifactId>-->
 <!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>io.opentelemetry</groupId>-->
+<!--            <artifactId>opentelemetry-exporter-zipkin</artifactId>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-sender-urlconnection</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>com.github.loki4j</groupId>

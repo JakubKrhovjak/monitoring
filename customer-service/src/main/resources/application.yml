@@ -20,23 +20,7 @@ management:
     tags:
       application: ${spring.application.name}
       profiles: ${spring.profiles.active}
-
-
-
-
-
-#    distribution:
-#      percentiles-histogram:
-#        all: true
-#        http:
-#          server:
-#            request: true
-
-#server:
-#  tomcat:
-#    mbeanregistry:
-#      enabled: true
-
+      org: ${spring.profiles.active}
 
 
 spring:
@@ -47,7 +31,6 @@ spring:
       enabled: always
   lifecycle:
     timeout-per-shutdown-phase: 1m
-
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
@@ -56,28 +39,25 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/data_db?user=jakub&password=pass
-#    username: user
-#    password: pass
-
   flyway:
     url: ${spring.datasource.url}
     enabled: false
 
 
-logging:
-  pattern:
-    console: "%clr(%d{HH:mm:ss.SSS}){blue} %clr(%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]){yellow} %clr(:){red} %clr(%m){faint}%n"
-    file: "{\"timestamp\":\"%d{HH:mm:ss.SSS}\",\"level\":\"%p\",\"traceId\":\"%X{traceId:-}\",\"spanId\":\"%X{spanId:-}\",\"appName\":\"${spring.application.name}\",\"message\":\"%m\"}%n"
-  file:
-    path: ${HOME}/monitoring
+#logging:
+#  pattern:
+#    console: "%clr(%d{HH:mm:ss.SSS}){blue} %clr(%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]){yellow} %clr(:){red} %clr(%m){faint}%n"
+#    file: "{\"timestamp\":\"%d{HH:mm:ss.SSS}\",\"level\":\"%p\",\"traceId\":\"%X{traceId:-}\",\"spanId\":\"%X{spanId:-}\",\"appName\":\"${spring.application.name}\",\"message\":\"%m\"}%n"
+#  file:
+#    path: ${HOME}/monitoring
 #
 #logging:
 #  pattern:
 #    console: "%clr(%d{HH:mm:ss.SSS}){blue} %clr(%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]){yellow} %clr(:){red} %clr(%m){faint}%n"
 #
-#logging:
-#  pattern:
-#    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 
 
